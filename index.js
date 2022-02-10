@@ -13,7 +13,6 @@ const port = 3000;
 
 console.clear();
 
-
 db.serialize(() => {
     function query(query) {
         return new Promise((resolve, reject) => {
@@ -28,8 +27,9 @@ db.serialize(() => {
                 console.log(err);
             }
 
+            console.log('TYpe;',type);
             if (type == 'RUN') {
-                db.run(query, function(err, result, row)  {
+                db.run(query, function (err, result, row) {
                     if (err) {
                         logger(err);
                         return reject(err);
@@ -61,7 +61,10 @@ db.serialize(() => {
 });
 
 function inserirRota(rota, funcao) {
-    route.use('/api/' + rota, (req, res) => {
+    route.post('/api' + rota, (req, res) => {
+        console.log('body:', req.body);
+        console.log('params:', req.params);
+        console.log('query:', req.query);
         function resposta(response) {
             res.json(response)
         }
@@ -72,6 +75,7 @@ function inserirRota(rota, funcao) {
 globalThis.inserirRota = inserirRota;
 
 app.use(cors());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 require('./api/routes');
 app.use(route);
